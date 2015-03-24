@@ -1,58 +1,151 @@
 package ua.dp.skillsup;
-/**
- * Date: 22.03.2015
- * Time: 21:55
- * To change this template use File | Settings | File Templates.
- */
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author Roman Litvishko
+ * Created by User on 24.03.2015.
  */
-public class ArrayBlockingQueue<Integer> {
-
-    private int limit = 10;
-    /** items index for next take, poll, peek or remove */
-    int takeIndex;
-
-    /** items index for next put, offer, or add */
+public class ArrayBlockingQueue<T> implements Queue {
+    
+    final Object[] items;
+    final int size ;
+    AtomicInteger head;
+    volatile Object one;
+    volatile Object two;
+    volatile Object three;
+    volatile Object four;
+    volatile Object five;
+    volatile Object six;
+    volatile Object seven;
+    AtomicInteger tail;
+    
+    long fHead = 0;
+    long fTail;
+    
+    int index;
     int putIndex;
 
-    /** Number of elements in the queue */
-    int count;
-    private Object[] array ;
-
     public ArrayBlockingQueue(int capacity) {
-        this.array = new Object[capacity];
+        this.items = new Object[capacity];
+        head = new AtomicInteger(0);
+        tail = new AtomicInteger(0);
+        size = items.length - 1;
     }
 
-    final int inc(int i) {
-        return (++i == array.length) ? 0 : i;
+    @Override
+    public boolean offer(Object obj) {
+        Object t = new Object();
+        if ((tail.get() - head.get()) < size) {
+            items[tail.getAndIncrement()] = obj;
+        } 
+        items[getPutIndex()] = obj;
+        
+        if (tail.get() - head.get() >= items.length)
+        
+        return false;
     }
 
-    public void put(Integer item) throws InterruptedException {
-        while (array.length == limit) {
-            wait();
+
+    public int getPutIndex() {
+        putIndex = head.get() - tail.get();
+        if (putIndex > 0) {
+            return putIndex %= items.length;
         }
-        if (array.length == 0) {
-            notifyAll();
-        }
-        for (int i = 0; i < array.length - 1; i++) {
-            if (array[i] == null) {
-                array[i] = item;
-            }
-        }
+        return putIndex;
     }
 
-    public Object get() throws InterruptedException {
-        while (array.length == 0) {
-            wait();
-        }
-        if (array.length == limit) {
-            notifyAll();
-        }
-        return array[0];
+    @Override
+    public Object poll() {
+        
+        
+        return null;
+    }
+    
+    
+    
+    
+    @Override
+    public int size() {
+        return items.length;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return false;
+    }
+
+    @Override
+    public Iterator iterator() {
+        return null;
+    }
+
+    @Override
+    public Object[] toArray() {
+        return new Object[0];
+    }
+
+    @Override
+    public T[] toArray(Object[] a) {
+        return new Object[0];
+    }
+
+    @Override
+    public boolean add(Object o) {
+        return false;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(Collection c) {
+        return false;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public boolean retainAll(Collection c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(Collection c) {
+        return false;
+    }
+
+    @Override
+    public boolean containsAll(Collection c) {
+        return false;
+    }
+
+
+    @Override
+    public Object remove() {
+        return null;
+    }
+
+
+    @Override
+    public Object element() {
+        return null;
+    }
+
+    @Override
+    public Object peek() {
+        return null;
+    }
 }
